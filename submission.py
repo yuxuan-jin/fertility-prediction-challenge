@@ -68,7 +68,7 @@ def clean_df(df, background_df=None):
     df['migration_background_bg'] = df['migration_background_bg'].astype(str)
     df['oplcat_2020'] = df['oplcat_2020'].astype(str)
 
-    numerical_columns = numerical_columns_selector(select_features_3)
+    numerical_columns = numerical_columns_selector(df)
 
     categorical_columns = ['gender_bg', 'migration_background_bg', "oplcat_2020"]
 
