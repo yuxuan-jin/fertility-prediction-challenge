@@ -111,7 +111,6 @@ def predict_outcomes(df, background_df=None, model_path="model.joblib"):
         print("The identifier variable 'nomem_encr' should be in the dataset")
 
     # Load the model
-    model = 
     model = joblib.load(model_path)
 
     # Preprocess the fake / holdout data
