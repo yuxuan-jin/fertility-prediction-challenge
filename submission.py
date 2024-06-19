@@ -18,6 +18,9 @@ run.py can be used to test your submission.
 # List your libraries and modules here. Don't forget to update environment.yml!
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import make_column_selector as selector
 import joblib
 
 
@@ -34,22 +37,51 @@ def clean_df(df, background_df=None):
     pd.DataFrame: The cleaned dataframe with only the necessary columns and processed variables.
     """
 
-    ## This script contains a bare minimum working example
-    # Create new variable with age
-    df["age"] = 2024 - df["birthyear_bg"]
-
-    # Imputing missing values in age with the mean
-    df["age"] = df["age"].fillna(df["age"].mean())
-
+    ## Missing in outcome avaiable
+    missing = df["outcome_available"] == 0
+    
+    df = df.drop(df[missing].index, axis = "rows")
+    
     # Selecting variables for modelling
     keepcols = [
         "nomem_encr",  # ID variable required for predictions,
-        "age"          # newly created variable
+        "age_bg",         # age
+        "gender_bg",
+        "migration_background_bg",
+        "oplcat_2020"
     ] 
 
     # Keeping data with variables selected
     df = df[keepcols]
 
+    # delete all rows with missing values
+
+    X_isna = df.isna().any(axis=1)
+
+    df = df.drop(df[X_isna].index)
+
+    # process the data
+    numerical_columns_selector = selector(dtype_exclude=object)
+
+    df['age_bg'] = df['age_bg'].astype(str).astype(float).astype(int)
+    df['gender_bg'] = df['gender_bg'].astype(str)
+    df['migration_background_bg'] = df['migration_background_bg'].astype(str)
+    df['oplcat_2020'] = df['oplcat_2020'].astype(str)
+
+    numerical_columns = numerical_columns_selector(select_features_3)
+
+    categorical_columns = ['gender_bg', 'migration_background_bg', "oplcat_2020"]
+
+    categorical_preprocessor = OneHotEncoder(handle_unknown="ignore", sparse_output = False)
+    numerical_preprocessor = StandardScaler()
+
+    preprocessor = ColumnTransformer([
+    ('one-hot-encoder', categorical_preprocessor, categorical_columns),
+    ('standard_scaler', numerical_preprocessor, numerical_columns)
+]).set_output(transform = "pandas")
+
+    df = preprocessor.fit_transform(df)
+    
     return df
 
 
@@ -79,6 +111,7 @@ def predict_outcomes(df, background_df=None, model_path="model.joblib"):
         print("The identifier variable 'nomem_encr' should be in the dataset")
 
     # Load the model
+    model = 
     model = joblib.load(model_path)
 
     # Preprocess the fake / holdout data
