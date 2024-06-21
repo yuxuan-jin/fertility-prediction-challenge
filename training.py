@@ -17,9 +17,6 @@ def train_save_model(cleaned_df, outcome_df):
     outcome_df (pd.DataFrame): The data with the outcome variable (e.g., from PreFer_train_outcome.csv or PreFer_fake_outcome.csv).
     """
     
-    ## This script contains a bare minimum working example
-    random.seed(1) # not useful here because logistic regression deterministic
-    
     # Combine cleaned_df and outcome_df
     model_df = pd.merge(cleaned_df, outcome_df, on="nomem_encr")
 

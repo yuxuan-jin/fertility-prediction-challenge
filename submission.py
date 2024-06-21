@@ -61,14 +61,15 @@ def clean_df(df, background_df=None):
     df = df.drop(df[X_isna].index)
 
     # process the data
-    numerical_columns_selector = selector(dtype_exclude=object)
-
+    # select the row of IDs
+    df_ID = df["nomem_encr"]
+    
     df['age_bg'] = df['age_bg'].astype(str).astype(float).astype(int)
     df['gender_bg'] = df['gender_bg'].astype(str)
     df['migration_background_bg'] = df['migration_background_bg'].astype(str)
     df['oplcat_2020'] = df['oplcat_2020'].astype(str)
 
-    numerical_columns = numerical_columns_selector(df)
+    numerical_columns = ['age_bg']
 
     categorical_columns = ['gender_bg', 'migration_background_bg', "oplcat_2020"]
 
@@ -81,7 +82,9 @@ def clean_df(df, background_df=None):
 ]).set_output(transform = "pandas")
 
     df = preprocessor.fit_transform(df)
-    
+
+    df = pd.merge(df, df_ID, left_index = True, right_index=True)
+
     return df
 
 
