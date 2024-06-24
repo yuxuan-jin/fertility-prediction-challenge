@@ -48,7 +48,12 @@ def clean_df(df, background_df=None):
         "age_bg",         # age
         "gender_bg",
         "migration_background_bg",
-        "oplcat_2020"
+        "oplcat_2020",
+        "woning_2020",
+        "cf20m024",
+        "cf20m128",
+        "cf20m454"
+      
     ] 
 
     # Keeping data with variables selected
@@ -64,14 +69,20 @@ def clean_df(df, background_df=None):
     # select the row of IDs
     df_ID = df["nomem_encr"]
     
+    # process other variables
     df['age_bg'] = df['age_bg'].astype(str).astype(float).astype(int)
     df['gender_bg'] = df['gender_bg'].astype(str)
     df['migration_background_bg'] = df['migration_background_bg'].astype(str)
-    df['oplcat_2020'] = df['oplcat_2020'].astype(str)
+    df['oplcat_2020'] = df['oplcat_2020'].astype(str) # education
+    df['woning_2020'] = df['woning_2020'].astype(str) # rent a house or not
+    df['cf20m024'] = df['cf20m024'].astype(str) # have a partner or not
+    df['cf20m128'] = df['cf20m128'].astype(str) # fertility intention
+    df['cf20m454'] = df['cf20m454'].astype(str) # have a child or not
+
 
     numerical_columns = ['age_bg']
 
-    categorical_columns = ['gender_bg', 'migration_background_bg', "oplcat_2020"]
+    categorical_columns = ['gender_bg', 'migration_background_bg', "oplcat_2020", "woning_2020", "cf20m024", "cf20m128", "cf20m454"]
 
     categorical_preprocessor = OneHotEncoder(handle_unknown="ignore", sparse_output = False)
     numerical_preprocessor = StandardScaler()
